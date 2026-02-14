@@ -1,0 +1,20 @@
+{
+  "name": "natives-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GTA V Natives Documentation - built with Nextra 4",
+  "scripts": {
+    "predev": "node scripts/build-data.js",
+    "dev": "next",
+    "prebuild": "node scripts/build-data.js",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^15.3.0",
+    "nextra": "^4.6.1",
+    "nextra-theme-docs": "^4.6.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  }
+}

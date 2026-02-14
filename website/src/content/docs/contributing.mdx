@@ -1,0 +1,59 @@
+# Contributing
+
+Contributions are greatly appreciated! Before you submit a pull request, please read the guidelines below.
+
+## Topics to contribute on
+
+- Documenting functionality of natives
+- Documenting parameter and return types
+- Naming unnamed natives appropriately
+- Adding example code to natives
+- Reviewing existing pull requests
+
+## File Format
+
+Each native is documented in a `.md` file organized by namespace directory. The filename should use **PascalCase** (e.g., `GetPlayerPed.md`).
+
+### Front Matter
+
+```yaml
+---
+ns: PLAYER
+aliases: ["0xHASH", "_COMMUNITY_NAME"]
+---
+```
+
+### Content Structure
+
+```markdown
+## GET_PLAYER_PED
+
+\```c
+// 0x43A66C31C68491C0 0x6E31E993
+Ped GET_PLAYER_PED(Player playerId);
+\```
+
+Description of the native function.
+
+## Parameters
+* **playerId**: The player index.
+
+## Return value
+The player's ped.
+
+## Examples
+\```lua
+local ped = GetPlayerPed(-1)
+\```
+```
+
+## Naming Conventions
+
+- Native names: **UPPER_SNAKE_CASE** (e.g., `GET_PLAYER_PED`)
+- Community-named natives: Prefix with `_` (e.g., `_EXAMPLE_NATIVE`)
+- Filenames: **PascalCase** (e.g., `GetPlayerPed.md`)
+
+## Where are CFX natives?
+
+This repository only contains original GTA V natives.
+Natives from the CFX namespace can be found in the [FiveM source](https://github.com/citizenfx/fivem/tree/master/ext/native-decls).
