@@ -39,6 +39,15 @@ export interface NamespaceInfo {
   count: number;
 }
 
+// Matches: ```c\n// 0xHASH 0xJHASH?\nsignature\n```
+const SIGNATURE_BLOCK_RE = /```c\s*\n\/\/\s*(0x[A-Fa-f0-9]+)\s*(0x[A-Fa-f0-9]+)?\s*\n(.+?)\n```/s;
+// Matches: ## Parameters\n<content until next section>
+const PARAMS_SECTION_RE = /## Parameters\s*\n([\s\S]*?)(?=\n## |\n```|$)/;
+// Matches: * **paramName**: description
+const PARAM_LINE_RE = /\*\s*\*\*(\w+)\*\*:?\s*(.*)/;
+// Matches: description text between closing ``` and next ## section
+const DESCRIPTION_RE = /```\s*\n\n([\s\S]*?)(?=\n## Parameters|\n## Examples?|\n```|$)/;
+
 function parseNativeContent(content: string, namespace: string, fileName: string): NativeData {
   const { data: frontmatter, content: body } = matter(content);
 
@@ -46,25 +55,23 @@ function parseNativeContent(content: string, namespace: string, fileName: string
   const aliases: string[] = frontmatter.aliases || [];
   const apiset: string | undefined = frontmatter.apiset;
 
-  // Extract signature from code block
   let signature = "";
   let hash = "";
   let jhash = "";
-  const sigMatch = body.match(/```c\s*\n\/\/\s*(0x[A-Fa-f0-9]+)\s*(0x[A-Fa-f0-9]+)?\s*\n(.+?)\n```/s);
+  const sigMatch = body.match(SIGNATURE_BLOCK_RE);
   if (sigMatch) {
     hash = sigMatch[1] || "";
     jhash = sigMatch[2] || "";
     signature = sigMatch[3]?.trim() || "";
   }
 
-  // Extract parameters
   const params: NativeParam[] = [];
-  const paramSection = body.match(/## Parameters\s*\n([\s\S]*?)(?=\n## |\n```|$)/);
+  const paramSection = body.match(PARAMS_SECTION_RE);
   if (paramSection) {
-    const paramLines = paramSection[1].match(/\*\s*\*\*(\w+)\*\*:?\s*(.*)/g);
+    const paramLines = paramSection[1].match(new RegExp(PARAM_LINE_RE.source, "g"));
     if (paramLines) {
       for (const line of paramLines) {
-        const m = line.match(/\*\s*\*\*(\w+)\*\*:?\s*(.*)/);
+        const m = line.match(PARAM_LINE_RE);
         if (m) {
           params.push({ name: m[1], description: m[2].trim() });
         }
@@ -72,9 +79,8 @@ function parseNativeContent(content: string, namespace: string, fileName: string
     }
   }
 
-  // Extract description (text between signature block and Parameters/Examples)
   let description = "";
-  const descMatch = body.match(/```\s*\n\n([\s\S]*?)(?=\n## Parameters|\n## Examples?|\n```|$)/);
+  const descMatch = body.match(DESCRIPTION_RE);
   if (descMatch) {
     // Skip if it's just code blocks or parameter sections
     const descText = descMatch[1].trim();

@@ -6,16 +6,15 @@ export function generateStaticParams() {
   return getNamespaces().map((ns) => ({ namespace: ns.name }));
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
 }: {
   params: Promise<{ namespace: string }>;
 }) {
-  // Note: generateMetadata in Next.js 15 receives params as a Promise
-  // but we can still use it synchronously for metadata
+  const { namespace } = await params;
   return {
-    title: `Natives Reference`,
-    description: `GTA V native functions reference`,
+    title: `${namespace} - Natives Reference`,
+    description: `GTA V ${namespace} native functions reference`,
   };
 }
 
