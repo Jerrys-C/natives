@@ -112,8 +112,8 @@ function NativesIndex({ data }) {
       for (const native of ns.natives) {
         if (
           native.name.toLowerCase().includes(q) ||
-          native.hash.toLowerCase().includes(q) ||
-          native.description.toLowerCase().includes(q)
+          (native.hash && native.hash.toLowerCase().includes(q)) ||
+          (native.description && native.description.toLowerCase().includes(q))
         ) {
           results.push(native)
           if (results.length >= 50) break
@@ -202,8 +202,8 @@ function NamespacePage({ nsName, natives }) {
     const q = filter.toLowerCase()
     return natives.filter(n =>
       n.name.toLowerCase().includes(q) ||
-      n.hash.toLowerCase().includes(q) ||
-      n.description.toLowerCase().includes(q)
+      (n.hash && n.hash.toLowerCase().includes(q)) ||
+      (n.description && n.description.toLowerCase().includes(q))
     )
   }, [natives, filter])
 
